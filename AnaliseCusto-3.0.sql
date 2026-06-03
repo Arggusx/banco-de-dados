@@ -115,20 +115,15 @@ DECLARE
 
 BEGIN
 
-    RAISE NOTICE '';
-    RAISE NOTICE '══════════════════════════════════════════════════════════════════════════';
-    RAISE NOTICE '  PASSO A — Removendo índices estratégicos...';
-    RAISE NOTICE '══════════════════════════════════════════════════════════════════════════';
-
     DROP INDEX IF EXISTS idx_pedidos_usuario;
     DROP INDEX IF EXISTS idx_itens_pedido_produto;
     DROP INDEX IF EXISTS idx_avaliacoes_usuario;
     DROP INDEX IF EXISTS idx_estoque_produto;
 
-    RAISE NOTICE '    ✗ idx_pedidos_usuario        removido';
-    RAISE NOTICE '    ✗ idx_itens_pedido_produto   removido';
-    RAISE NOTICE '    ✗ idx_avaliacoes_usuario     removido';
-    RAISE NOTICE '    ✗ idx_estoque_produto        removido';
+    RAISE NOTICE 'idx_pedidos_usuario        removido';
+    RAISE NOTICE 'idx_itens_pedido_produto   removido';
+    RAISE NOTICE 'idx_avaliacoes_usuario     removido';
+    RAISE NOTICE 'idx_estoque_produto        removido';
 
     ANALYZE pedidos;
     ANALYZE itens_pedido;
@@ -137,37 +132,27 @@ BEGIN
     ANALYZE usuarios;
     ANALYZE produtos;
 
-    RAISE NOTICE '    ✔ ANALYZE executado em todas as tabelas envolvidas';
-    RAISE NOTICE '  Cenário SEM índices preparado.';
-
-    RAISE NOTICE '';
-    RAISE NOTICE '══════════════════════════════════════════════════════════════════════════';
-    RAISE NOTICE '  PASSO B — Executando benchmark SEM índices (% iterações cada)...', v_iteracoes;
-    RAISE NOTICE '══════════════════════════════════════════════════════════════════════════';
+    RAISE NOTICE 'ANALYZE executado em todas as tabelas envolvidas';
+    RAISE NOTICE 'Cenário SEM índices preparado.';
 
     PERFORM benchmark_query('SEM_INDICES', 'Q1_UNION',     q1_union,     v_iteracoes);
-    RAISE NOTICE '    ✔ Q1 (UNION)     — % iterações concluídas', v_iteracoes;
+    RAISE NOTICE 'Q1 (UNION)     — % iterações concluídas', v_iteracoes;
 
     PERFORM benchmark_query('SEM_INDICES', 'Q2_INTERSECT', q2_intersect, v_iteracoes);
-    RAISE NOTICE '    ✔ Q2 (INTERSECT) — % iterações concluídas', v_iteracoes;
+    RAISE NOTICE 'Q2 (INTERSECT) — % iterações concluídas', v_iteracoes;
 
     PERFORM benchmark_query('SEM_INDICES', 'Q3_EXCEPT',    q3_except,    v_iteracoes);
-    RAISE NOTICE '    ✔ Q3 (EXCEPT)    — % iterações concluídas', v_iteracoes;
-
-    RAISE NOTICE '';
-    RAISE NOTICE '══════════════════════════════════════════════════════════════════════════';
-    RAISE NOTICE '  PASSO C — Criando índices estratégicos...';
-    RAISE NOTICE '══════════════════════════════════════════════════════════════════════════';
+    RAISE NOTICE 'Q3 (EXCEPT)    — % iterações concluídas', v_iteracoes;
 
     CREATE INDEX idx_pedidos_usuario      ON pedidos(usuario_id);
     CREATE INDEX idx_itens_pedido_produto ON itens_pedido(produto_id);
     CREATE INDEX idx_avaliacoes_usuario   ON avaliacoes(usuario_id);
     CREATE INDEX idx_estoque_produto      ON estoque_movimentacao(produto_id);
 
-    RAISE NOTICE '    ✔ idx_pedidos_usuario        ON pedidos(usuario_id)';
-    RAISE NOTICE '    ✔ idx_itens_pedido_produto   ON itens_pedido(produto_id)';
-    RAISE NOTICE '    ✔ idx_avaliacoes_usuario     ON avaliacoes(usuario_id)';
-    RAISE NOTICE '    ✔ idx_estoque_produto        ON estoque_movimentacao(produto_id)';
+    RAISE NOTICE 'idx_pedidos_usuario        ON pedidos(usuario_id)';
+    RAISE NOTICE 'idx_itens_pedido_produto   ON itens_pedido(produto_id)';
+    RAISE NOTICE 'idx_avaliacoes_usuario     ON avaliacoes(usuario_id)';
+    RAISE NOTICE 'idx_estoque_produto        ON estoque_movimentacao(produto_id)';
 
     ANALYZE pedidos;
     ANALYZE itens_pedido;
@@ -176,27 +161,17 @@ BEGIN
     ANALYZE usuarios;
     ANALYZE produtos;
 
-    RAISE NOTICE '    ✔ ANALYZE executado em todas as tabelas envolvidas';
-    RAISE NOTICE '  Cenário COM índices preparado.';
-
-    RAISE NOTICE '';
-    RAISE NOTICE '══════════════════════════════════════════════════════════════════════════';
-    RAISE NOTICE '  PASSO D — Executando benchmark COM índices (% iterações cada)...', v_iteracoes;
-    RAISE NOTICE '══════════════════════════════════════════════════════════════════════════';
+    RAISE NOTICE 'ANALYZE executado em todas as tabelas envolvidas';
+    RAISE NOTICE 'Cenário COM índices preparado.';
 
     PERFORM benchmark_query('COM_INDICES', 'Q1_UNION',     q1_union,     v_iteracoes);
-    RAISE NOTICE '    ✔ Q1 (UNION)     — % iterações concluídas', v_iteracoes;
+    RAISE NOTICE 'Q1 (UNION)     — % iterações concluídas', v_iteracoes;
 
     PERFORM benchmark_query('COM_INDICES', 'Q2_INTERSECT', q2_intersect, v_iteracoes);
-    RAISE NOTICE '    ✔ Q2 (INTERSECT) — % iterações concluídas', v_iteracoes;
+    RAISE NOTICE 'Q2 (INTERSECT) — % iterações concluídas', v_iteracoes;
 
     PERFORM benchmark_query('COM_INDICES', 'Q3_EXCEPT',    q3_except,    v_iteracoes);
-    RAISE NOTICE '    ✔ Q3 (EXCEPT)    — % iterações concluídas', v_iteracoes;
-
-    RAISE NOTICE '';
-    RAISE NOTICE '══════════════════════════════════════════════════════════════════════════';
-    RAISE NOTICE '  PASSOS A-D CONCLUÍDOS — Gerando relatórios (Seção 3)...';
-    RAISE NOTICE '══════════════════════════════════════════════════════════════════════════';
+    RAISE NOTICE 'Q3 (EXCEPT)    — % iterações concluídas', v_iteracoes;
 
 END $$;
 
@@ -227,16 +202,16 @@ SELECT
     ROUND(MIN(tempo_plan_ms), 3)            AS "Plan Min (ms)",
     ROUND(AVG(tempo_plan_ms), 3)            AS "Plan Média (ms)",
     ROUND(MAX(tempo_plan_ms), 3)            AS "Plan Max (ms)",
-    ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY tempo_plan_ms), 3)
+    ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY tempo_plan_ms)::NUMERIC, 3)
                                             AS "Plan Mediana (ms)",
     ROUND(MIN(tempo_exec_ms), 3)            AS "Exec Min (ms)",
     ROUND(AVG(tempo_exec_ms), 3)            AS "Exec Média (ms)",
     ROUND(MAX(tempo_exec_ms), 3)            AS "Exec Max (ms)",
-    ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY tempo_exec_ms), 3)
+    ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY tempo_exec_ms)::NUMERIC, 3)
                                             AS "Exec Mediana (ms)",
     ROUND(MIN(tempo_total_ms), 3)           AS "Total Min (ms)",
     ROUND(AVG(tempo_total_ms), 3)           AS "Total Média (ms)",
-    ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY tempo_total_ms), 3)
+    ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY tempo_total_ms)::NUMERIC, 3)
                                             AS "Total Mediana (ms)"
 FROM _benchmark_resultados
 GROUP BY cenario, id_consulta, tipo_execucao
@@ -250,9 +225,9 @@ WITH medianas AS (
         id_consulta,
         ROUND(MIN(custo_startup), 2)    AS custo_startup,
         ROUND(MIN(custo_total), 2)      AS custo_total,
-        ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY tempo_plan_ms), 3) AS med_plan,
-        ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY tempo_exec_ms), 3) AS med_exec,
-        ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY tempo_total_ms), 3) AS med_total
+        ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY tempo_plan_ms)::NUMERIC, 3) AS med_plan,
+        ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY tempo_exec_ms)::NUMERIC, 3) AS med_exec,
+        ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY tempo_total_ms)::NUMERIC, 3) AS med_total
     FROM _benchmark_resultados
     WHERE tipo_execucao = 'WARM'
     GROUP BY cenario, id_consulta
@@ -359,8 +334,8 @@ WITH cold AS (
 warm_med AS (
     SELECT
         cenario, id_consulta,
-        ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY tempo_exec_ms), 3) AS exec_warm,
-        ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY tempo_total_ms), 3) AS total_warm
+        ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY tempo_exec_ms)::NUMERIC, 3) AS exec_warm,
+        ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY tempo_total_ms)::NUMERIC, 3) AS total_warm
     FROM _benchmark_resultados
     WHERE tipo_execucao = 'WARM'
     GROUP BY cenario, id_consulta
