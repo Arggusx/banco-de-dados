@@ -192,7 +192,7 @@ def main():
         conn.close()
         print("\n✔ Conexão encerrada.")
         print("=" * 70)
-        print(" Próximo passo: execute a PARTE 2 do DML-1.txt no PostgreSQL.")
+        print(" Próximo passo: execute o script DML-parte2.sql.")
         print("=" * 70)
 
 
